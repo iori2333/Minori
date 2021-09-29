@@ -11,11 +11,17 @@ object Recorder {
   lateinit var listener: Listener<GroupMessageEvent>
 
   fun listen() {
-    listener = GlobalEventChannel.subscribeAlways<GroupMessageEvent> {
-      val msg = RecordMessage(it.message.serializeToMiraiCode(), it.time)
-      if (msg.content.length <= 8) {
-        addCache(it.group.id, it.sender.id, msg)
-      }
+    listener = GlobalEventChannel.subscribeAlways {
+      val msg = RecordMessage(
+        it.sender.id,
+        it.group.id,
+        it.source.ids,
+        it.source.internalIds,
+        it.source.time,
+        it.message.serializeToMiraiCode()
+      )
+
+      addCache(msg)
       MessageSQL.insertMessage(it.group.id, it.sender.id, msg)
     }
   }
@@ -27,8 +33,8 @@ object Recorder {
     consoleLogger.info("Cache size: ${MessageCache.cache.entries.sumOf { it.value.size }} entries")
   }
 
-  private fun addCache(group: Long, sender: Long, message: RecordMessage) {
-    val key = "$group-$sender"
+  private fun addCache(message: RecordMessage) {
+    val key = message.group.toString()
     if (MessageCache.cache[key] == null) {
       MessageCache.cache[key] = mutableListOf()
     }
@@ -39,12 +45,19 @@ object Recorder {
   }
 
   fun randomMessage(group: Long): String {
-    return MessageCache.cache.entries
-      .filter { it.key.startsWith(group.toString()) }
-      .random().value.random().content
+    return MessageCache.cache[group.toString()]
+      ?.filter { it -> it.content.length < 8 }
+      ?.randomOrNull()?.content ?: ""
   }
 
-  fun memberMessage(group: Long, user: Long): List<RecordMessage> {
-    return MessageCache.cache["$group-$user"] ?: listOf()
+  fun recentMessage(group: Long, k: Int): List<RecordMessage> {
+    return MessageCache.cache[group.toString()]
+      ?.takeLast(k) ?: listOf()
+  }
+
+  fun memberMessage(group: Long, user: Long, k: Int): List<RecordMessage> {
+    return MessageCache.cache[group.toString()]
+      ?.filter { it.sender == user }
+      ?.take(k) ?: listOf()
   }
 }

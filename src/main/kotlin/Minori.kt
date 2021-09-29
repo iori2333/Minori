@@ -8,24 +8,29 @@ import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import me.iori.minori.commands.*
 import me.iori.minori.data.*
 import me.iori.minori.records.Recorder
+import net.mamoe.mirai.console.command.Command
+import net.mamoe.mirai.console.data.PluginData
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.1") {
   name("Minori")
   info("Minori Bot")
   author("Iori")
 }) {
+  private lateinit var commands: List<Command>
+  private lateinit var data: List<PluginData>
+
   override fun onEnable() {
-    AskData.reload()
-    MessageCache.reload()
+    commands = listOf(AskCommand, LuckCommand, PingCommand, LogCommand)
+    data = listOf(LanguageData, MessageCache)
     Recorder.listen()
 
-    AskCommand.register()
-    PingCommand.register()
+    data.forEach { it.reload() }
+    commands.forEach { it.register() }
   }
 
   override fun onDisable() {
     Recorder.dispose()
-    AskCommand.unregister()
-    PingCommand.unregister()
+
+    commands.forEach { it.unregister() }
   }
 }
