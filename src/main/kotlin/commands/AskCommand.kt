@@ -3,6 +3,7 @@ package me.iori.minori.commands
 import me.iori.minori.Minori
 import me.iori.minori.data.AskData
 import me.iori.minori.processors.UsePipelines
+import me.iori.minori.records.Recorder
 
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.command.CommandSender
@@ -97,6 +98,6 @@ object AskCommand : RawCommand(
   }
 
   private fun randomContent(group: Group): String {
-    return "pong!"
+    return Recorder.randomMessage(group.id)
   }
 }
