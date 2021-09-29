@@ -5,8 +5,6 @@ import java.sql.*
 
 object MessageSQL {
   private const val URL = "jdbc:sqlite:data/Minori/minori.sqlite"
-  private const val USER = "root"
-  private const val PASSWORD = "root"
 
   private const val CREATE_TABLE = """
     CREATE TABLE IF NOT EXISTS messages
@@ -26,9 +24,13 @@ object MessageSQL {
 
   init {
     Class.forName("org.sqlite.JDBC")
-    conn = DriverManager.getConnection(URL, USER, PASSWORD)
+    conn = DriverManager.getConnection(URL)
     val stmt = conn.createStatement()
     stmt.execute(CREATE_TABLE)
+  }
+
+  fun dispose() {
+    conn.close()
   }
 
   fun insertMessage(group: Long, sender: Long, message: RecordMessage) {

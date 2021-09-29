@@ -24,6 +24,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.1") {
   }
 
   override fun onDisable() {
+    Recorder.dispose()
     AskCommand.unregister()
     PingCommand.unregister()
   }
