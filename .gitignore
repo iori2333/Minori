@@ -1,0 +1,15 @@
+# Project exclude paths
+/.gradle/
+/build/
+/.idea/
+/bots
+/config/
+/data/
+/libs/
+/test/
+/out/
+/run/
+/scripts/
+/plugins/
+
+**/Constants.kt
