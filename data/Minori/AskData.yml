@@ -12,5 +12,5 @@ places: {
 }
 
 excludedR10s: [ '几何', '茶几', '几乎', '几率', '玉几', '雕几', '彤几', '䰍几', '素几' ]
-excludedPrefixes: [ '问题', '问询', '问候', '问鼎', '问问' ]
+excludedPrefixes: [ '题', '询', '候', '鼎', '问' ]
 excludedChoiceWords: [ '觉', '晓', '舍', '使' ]

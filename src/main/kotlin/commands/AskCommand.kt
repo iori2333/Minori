@@ -17,6 +17,7 @@ import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.content
+import net.mamoe.mirai.message.data.toMessageChain
 import kotlin.random.Random
 
 @OptIn(
@@ -28,13 +29,13 @@ object AskCommand : RawCommand(
   primaryName = "问",
   description = "让Minori回答问题",
 ), UsePipelines {
-  override val usage = "(/)${primaryName}    # ${description}"
+  override val usage = "(/)$primaryName    # $description"
 
   init {
     GlobalEventChannel.subscribeAlways<GroupMessageEvent> {
       if (it.message.content.startsWith(primaryName)) {
         CommandManager.executeCommand(
-          sender = it.toCommandSender(),
+          sender = toCommandSender(),
           command = this@AskCommand,
           arguments = message,
           checkPermission = true,
@@ -45,9 +46,15 @@ object AskCommand : RawCommand(
 
   override suspend fun CommandSender.onCommand(args: MessageChain) {
     val group = this.getGroupOrNull()
-    val (text, pipelines) = preProcess(args.content)
-    val send = postProcess(getResponse(group, text), pipelines)
-    sendMessage(send.deserializeMiraiCode())
+    val (text, pipelines) = preProcess(args.joinToString(" ") {
+      it.toMessageChain().serializeToMiraiCode()
+    })
+    val trimmed = text.trim().removePrefix(primaryName)
+    val send = postProcess(getResponse(group, trimmed), pipelines)
+    if (send == trimmed || send.isEmpty()) {
+      return
+    }
+    sendMessage(send.trim().deserializeMiraiCode())
   }
 
   private val tokenTable = listOf<Pair<Regex, (MatchResult) -> String>>(
@@ -65,8 +72,7 @@ object AskCommand : RawCommand(
     if (AskData.excludedPrefixes.any { text.startsWith(it) }) {
       return ""
     }
-
-    var res = text.substring(1).split("还是").random()
+    var res = text.split("还是").random()
     tokenTable.forEach { res = res.replace(it.first, transform = it.second) }
     if (group != null) {
       res = res.replace(Regex("谁")) { group.members.random().nameCardOrNick }
