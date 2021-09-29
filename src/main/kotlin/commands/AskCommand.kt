@@ -1,7 +1,7 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
-import me.iori.minori.data.AskData
+import me.iori.minori.data.LanguageData
 import me.iori.minori.processors.UsePipelines
 import me.iori.minori.records.Recorder
 
@@ -65,12 +65,12 @@ object AskCommand : RawCommand(
     Pair(Regex("多少")) { Random.nextInt(0, 100).toString() },
     Pair(Regex("哪里")) { randomPlace() },
     Pair(Regex("什么时候")) { "${Random.nextInt(24)}点${Random.nextInt(60)}分" },
-    Pair(Regex("干什么")) { AskData.doings.random() },
+    Pair(Regex("干什么")) { LanguageData.doings.random() },
     Pair(Regex("几")) { Random.nextInt(0, 10).toString() },
   )
 
   private fun getResponse(group: Group?, text: String): String {
-    if (AskData.excludedPrefixes.any { text.startsWith(it) }) {
+    if (LanguageData.excludedPrefixes.any { text.startsWith(it) }) {
       return ""
     }
     var res = text.split("还是").random()
@@ -86,12 +86,12 @@ object AskCommand : RawCommand(
     if (Random.nextBoolean()) match.groupValues[1] else split + match.groupValues[1]
 
   private fun randomPlace(): String {
-    val (place, suffixes) = AskData.places.entries.random()
+    val (place, suffixes) = LanguageData.places.entries.random()
     return place + suffixes.random()
   }
 
   private fun randomChoiceSp(match: MatchResult, split: String = "不"): String {
-    if (AskData.excludedChoiceWords.contains(match.groupValues[1])) {
+    if (LanguageData.excludedChoiceWords.contains(match.groupValues[1])) {
       return (if (Random.nextBoolean()) "" else split) + match.groupValues[1] + "得"
     }
     return match.groupValues[1] + if (Random.nextBoolean()) split else "得"
