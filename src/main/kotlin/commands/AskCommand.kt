@@ -28,6 +28,8 @@ object AskCommand : RawCommand(
   primaryName = "问",
   description = "让Minori回答问题",
 ), UsePipelines {
+  override val usage = "(/)${primaryName}    # ${description}"
+
   init {
     GlobalEventChannel.subscribeAlways<GroupMessageEvent> {
       if (it.message.content.startsWith(primaryName)) {
