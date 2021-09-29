@@ -6,6 +6,7 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 
 import me.iori.minori.commands.*
+import me.iori.minori.data.*
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.1") {
   name("Minori")
@@ -13,6 +14,8 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.1") {
   author("Iori")
 }) {
   override fun onEnable() {
+    AskData.reload()
+
     AskCommand.register()
     PingCommand.register()
   }
