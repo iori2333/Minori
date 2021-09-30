@@ -10,5 +10,8 @@
 /run/
 /scripts/
 /plugins/
+/data/Minori/setus/
+/data/Minori/MessageCache.yml
+/data/Minori/minori.sqlite
 
 **/Constants.kt
