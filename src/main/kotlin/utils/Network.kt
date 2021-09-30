@@ -26,6 +26,6 @@ object Network {
   }
 
   suspend inline fun <reified T> get(urlString: String, block: HttpRequestBuilder.() -> Unit = {}): T {
-    return client.get(urlString)
+    return client.get(urlString, block)
   }
 }
