@@ -43,7 +43,7 @@ object SetuCommand : RawCommand(
 
   override suspend fun CommandSender.onCommand(args: MessageChain) {
     val tags = if (args.isEmpty()) listOf() else args.map { it.content }
-    val r: Response = Network.get(URL) {
+    val r: Response = Network.json(URL) {
       parameter("r18", 0)
       parameter("size", QUALITY)
       if (tags.isNotEmpty()) parameter("tag", tags.joinToString("|"))
