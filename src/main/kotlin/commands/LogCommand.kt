@@ -1,7 +1,7 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
-import me.iori.minori.records.Recorder
+import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.getBotOrNull

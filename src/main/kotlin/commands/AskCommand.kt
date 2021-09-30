@@ -3,7 +3,7 @@ package me.iori.minori.commands
 import me.iori.minori.Minori
 import me.iori.minori.data.LanguageData
 import me.iori.minori.processors.UsePipelines
-import me.iori.minori.records.Recorder
+import me.iori.minori.utils.Recorder
 
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.command.CommandSender

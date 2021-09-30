@@ -1,7 +1,8 @@
-package me.iori.minori.records
+package me.iori.minori.utils
 
 import me.iori.minori.data.MessageCache
 import me.iori.minori.data.MessageSQL
+import me.iori.minori.data.RecordMessage
 
 import net.mamoe.mirai.console.terminal.consoleLogger
 import net.mamoe.mirai.event.GlobalEventChannel

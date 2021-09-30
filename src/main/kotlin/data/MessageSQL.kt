@@ -1,6 +1,5 @@
 package me.iori.minori.data
 
-import me.iori.minori.records.RecordMessage
 import java.sql.*
 
 object MessageSQL {
