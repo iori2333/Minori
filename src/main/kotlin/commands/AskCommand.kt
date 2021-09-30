@@ -15,6 +15,7 @@ import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.nameCardOrNick
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.content
@@ -33,7 +34,7 @@ object AskCommand : RawCommand(
   override val usage = "(/)$primaryName    # $description"
 
   init {
-    GlobalEventChannel.subscribeAlways<GroupMessageEvent> {
+    GlobalEventChannel.subscribeAlways<MessageEvent> {
       if (it.message.content.startsWith(primaryName)) {
         CommandManager.executeCommand(
           sender = toCommandSender(),
