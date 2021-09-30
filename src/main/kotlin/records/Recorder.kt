@@ -2,13 +2,18 @@ package me.iori.minori.records
 
 import me.iori.minori.data.MessageCache
 import me.iori.minori.data.MessageSQL
+
 import net.mamoe.mirai.console.terminal.consoleLogger
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.Listener
 import net.mamoe.mirai.event.events.GroupMessageEvent
+import kotlin.math.min
 
 object Recorder {
-  lateinit var listener: Listener<GroupMessageEvent>
+  private lateinit var listener: Listener<GroupMessageEvent>
+  private const val MAX_RECALL = 20
+  private const val MAX_TOKEN_SIZE = 10
+  private const val MAX_CACHE_SIZE = 1000
 
   fun listen() {
     listener = GlobalEventChannel.subscribeAlways {
@@ -38,26 +43,35 @@ object Recorder {
     if (MessageCache.cache[key] == null) {
       MessageCache.cache[key] = mutableListOf()
     }
+
+    if (MessageCache.tokens[key] == null) {
+      MessageCache.tokens[key] = mutableListOf()
+    }
+
     MessageCache.cache[key]!!.add(message)
-    if (MessageCache.cache[key]!!.size >= 1000) {
+    if (MessageCache.cache[key]!!.size >= MAX_CACHE_SIZE) {
       MessageCache.cache[key]!!.removeFirst()
+    }
+    if (message.content.length <= MAX_TOKEN_SIZE) {
+      MessageCache.tokens[key]!!.add(message.content)
+      if (MessageCache.tokens[key]!!.size >= MAX_CACHE_SIZE) {
+        MessageCache.tokens[key]!!.removeFirst()
+      }
     }
   }
 
   fun randomMessage(group: Long): String {
-    return MessageCache.cache[group.toString()]
-      ?.filter { it -> it.content.length < 8 }
-      ?.randomOrNull()?.content ?: ""
+    return MessageCache.tokens[group.toString()]?.random() ?: ""
   }
 
   fun recentMessage(group: Long, k: Int): List<RecordMessage> {
     return MessageCache.cache[group.toString()]
-      ?.takeLast(k) ?: listOf()
+      ?.takeLast(min(k, MAX_RECALL)) ?: listOf()
   }
 
-  fun memberMessage(group: Long, user: Long, k: Int): List<RecordMessage> {
+  fun memberMessage(group: Long, sender: Long, k: Int): List<RecordMessage> {
     return MessageCache.cache[group.toString()]
-      ?.filter { it.sender == user }
-      ?.take(k) ?: listOf()
+      ?.filter { it.sender == sender }
+      ?.take(min(k, MAX_RECALL)) ?: listOf()
   }
 }

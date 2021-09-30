@@ -1,5 +1,6 @@
 package me.iori.minori.processors.pipelines
 
-interface Pipeline {
-
+abstract class Pipeline(val name: String) {
+  abstract fun execute(text: String, params: String): String
 }
+
