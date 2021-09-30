@@ -1,6 +1,7 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
+import me.iori.minori.utils.Addons.replaceAll
 import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
@@ -19,6 +20,10 @@ object LogCommand : CompositeCommand(
     net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors::class
   )
   override val prefixOptional = true
+  private val escapes = listOf(
+    "&nbsp;" to " ",
+    "\\n" to "\n",
+  )
 
   @SubCommand
   @Description("返回群聊中最近几条消息")
@@ -50,10 +55,14 @@ object LogCommand : CompositeCommand(
 
   @SubCommand
   @Description("伪造聊天记录（单人）")
-  suspend fun MemberCommandSender.build(user: User, vararg messages: Message) {
+  suspend fun MemberCommandSender.build(user: User, vararg messages: SingleMessage) {
     val forward = buildForwardMessage(group) {
       messages.forEach {
-        add(user.id, user.nameCardOrNick, it)
+        if (it is PlainText) {
+          add(user.id, user.nameCardOrNick, it.replaceAll(escapes))
+        } else {
+          add(user.id, user.nameCardOrNick, it)
+        }
       }
     }
     if (!forward.isContentEmpty()) {
@@ -68,11 +77,13 @@ object LogCommand : CompositeCommand(
     var name = bot.nameCardOrNick
     val forward = buildForwardMessage(group) {
       messages.forEach {
-        if (it is At) {
-          curr = it.target
-          name = group[curr]?.nameCardOrNick ?: "$curr"
-        } else {
-          add(curr, name, it)
+        when (it) {
+          is At -> {
+            curr = it.target
+            name = group[curr]?.nameCardOrNick ?: "$curr"
+          }
+          is PlainText -> add(curr, name, it.replaceAll(escapes))
+          else -> add(curr, name, it)
         }
       }
     }
