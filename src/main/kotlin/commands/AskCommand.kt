@@ -58,15 +58,21 @@ object AskCommand : RawCommand(
     sendMessage(send.trim().deserializeMiraiCode())
   }
 
-  private val tokenTable = listOf<Pair<Regex, (MatchResult) -> String>>(
-    Pair(Regex("(.)不\\1得")) { randomChoiceSp(it) },
-    Pair(Regex("(.)不\\1")) { randomChoice(it, "不") },
-    Pair(Regex("(.)没\\1")) { randomChoice(it, "没") },
-    Pair(Regex("多少")) { Random.nextInt(0, 100).toString() },
-    Pair(Regex("哪里")) { randomPlace() },
-    Pair(Regex("什么时候")) { "${Random.nextInt(24)}点${Random.nextInt(60)}分" },
-    Pair(Regex("干什么")) { LanguageData.doings.random() },
-    Pair(Regex("几")) { Random.nextInt(0, 10).toString() },
+  private val tokens = listOf<Pair<Regex,  (MatchResult) -> String>>(
+    Regex("(.)不\\1得") to { randomChoiceSp(it) },
+    Regex("(.)不\\1") to { randomChoice(it, "不") },
+    Regex("(.)没\\1") to { randomChoice(it, "没") },
+    Regex("多少") to { Random.nextInt(0, 100).toString() },
+    Regex("哪里") to { randomPlace() },
+    Regex("什么时候") to { "${Random.nextInt(24)}点${Random.nextInt(60)}分" },
+    Regex("干什么") to { LanguageData.doings.random() },
+    Regex("几") to { Random.nextInt(0, 10).toString() },
+  )
+
+  private val tokensWithGroup = listOf<Pair<Regex, (Group) -> String>>(
+    Regex("谁") to { it.members.random().nameCardOrNick },
+    Regex("为什么") to { "因为${randomContent(it)}，所以" },
+    Regex("什么") to { randomContent(it) },
   )
 
   private fun getResponse(group: Group?, text: String): String {
@@ -74,10 +80,9 @@ object AskCommand : RawCommand(
       return ""
     }
     var res = text.split("还是").random()
-    tokenTable.forEach { res = res.replace(it.first, transform = it.second) }
+    tokens.forEach { res = res.replace(it.first, it.second) }
     if (group != null) {
-      res = res.replace(Regex("谁")) { group.members.random().nameCardOrNick }
-      res = res.replace(Regex("什么")) { randomContent(group) }
+      tokensWithGroup.forEach { res = res.replace(it.first) { _ -> it.second(group) } }
     }
     return res
   }
