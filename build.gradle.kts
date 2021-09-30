@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   val kotlinVersion = "1.5.10"
 
@@ -13,12 +15,16 @@ dependencies {
 }
 
 group = "me.iori"
-version = "0.1.0"
+version = "0.2.0"
 
 repositories {
   mavenLocal()
   maven("https://maven.aliyun.com/repository/public")
   mavenCentral()
+}
+
+tasks.withType<KotlinCompile>() {
+  kotlinOptions.jvmTarget = "11"
 }
 
 kotlin.sourceSets.all { languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn") }
