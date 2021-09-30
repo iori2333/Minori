@@ -4,15 +4,16 @@ import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-
-import me.iori.minori.commands.*
-import me.iori.minori.data.*
-import me.iori.minori.utils.Recorder
-import me.iori.minori.utils.Network
 import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.data.PluginData
 
-object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.1") {
+import me.iori.minori.commands.*
+import me.iori.minori.commands.simple.*
+import me.iori.minori.data.*
+import me.iori.minori.utils.Recorder
+import me.iori.minori.utils.Network
+
+object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
   name("Minori")
   info("Minori Bot")
   author("Iori")
@@ -21,7 +22,15 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.1") {
   private lateinit var data: List<PluginData>
 
   override fun onEnable() {
-    commands = listOf(AskCommand, LuckCommand, PingCommand, LogCommand, SetuCommand)
+    commands = listOf(
+      AskCommand,
+      LuckCommand,
+      PingCommand,
+      LogCommand,
+      SetuCommand,
+      EatCommand,
+      LearnCommand,
+    )
     data = listOf(LanguageData, MessageCache)
     Recorder.listen()
     Network.load()
