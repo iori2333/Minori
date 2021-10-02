@@ -9,6 +9,8 @@ object UseInlines {
     RandInline,
     JoinInline,
     ChoiceInline,
+    OptionalInline,
+    RangeInline,
   )
 
   fun String.parseInlines(): String = try {
