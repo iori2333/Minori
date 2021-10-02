@@ -33,19 +33,6 @@ object AskCommand : RawCommand(
 ), UsePipelines {
   override val usage = "(/)$primaryName    # $description"
 
-  init {
-    GlobalEventChannel.subscribeAlways<MessageEvent> {
-      if (it.message.content.startsWith(primaryName)) {
-        CommandManager.executeCommand(
-          sender = toCommandSender(),
-          command = this@AskCommand,
-          arguments = message,
-          checkPermission = true,
-        )
-      }
-    }
-  }
-
   override suspend fun CommandSender.onCommand(args: MessageChain) {
     val group = this.getGroupOrNull()
     val (text, pipelines) = preProcess(args.joinToString(" ") {
