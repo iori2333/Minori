@@ -45,15 +45,15 @@ object Recorder {
       MessageCache.cache[key] = mutableListOf()
     }
 
-    if (MessageCache.tokens[key] == null) {
-      MessageCache.tokens[key] = mutableListOf()
-    }
-
     MessageCache.cache[key]!!.add(message)
     if (MessageCache.cache[key]!!.size >= MAX_CACHE_SIZE) {
       MessageCache.cache[key]!!.removeFirst()
     }
+
     if (message.content.length <= MAX_TOKEN_SIZE) {
+      if (MessageCache.tokens[key] == null) {
+        MessageCache.tokens[key] = mutableListOf()
+      }
       MessageCache.tokens[key]!!.add(message.content)
       if (MessageCache.tokens[key]!!.size >= MAX_CACHE_SIZE) {
         MessageCache.tokens[key]!!.removeFirst()
