@@ -1,4 +1,4 @@
-package me.iori.minori.response
+package me.iori.minori.responders
 
 import me.iori.minori.data.ResponsesData
 import net.mamoe.mirai.event.Event

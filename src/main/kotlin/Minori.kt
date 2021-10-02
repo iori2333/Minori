@@ -13,7 +13,8 @@ import net.mamoe.mirai.event.globalEventChannel
 import me.iori.minori.commands.*
 import me.iori.minori.commands.simple.*
 import me.iori.minori.data.*
-import me.iori.minori.response.*
+import me.iori.minori.responders.MemberEventResponder
+import me.iori.minori.responders.MessageResponder
 import me.iori.minori.utils.*
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
