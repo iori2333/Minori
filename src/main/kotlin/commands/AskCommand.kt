@@ -2,6 +2,7 @@ package me.iori.minori.commands
 
 import me.iori.minori.Minori
 import me.iori.minori.data.LanguageData
+import me.iori.minori.processors.UseInlines.parseInlines
 import me.iori.minori.processors.UsePipelines
 import me.iori.minori.utils.Recorder
 
@@ -14,7 +15,6 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.nameCardOrNick
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
@@ -52,14 +52,14 @@ object AskCommand : RawCommand(
       it.toMessageChain().serializeToMiraiCode()
     })
     val trimmed = text.trim().removePrefix(primaryName)
-    val send = postProcess(getResponse(group, trimmed), pipelines)
+    val send = postProcess(getResponse(group, trimmed), pipelines).parseInlines()
     if (send == trimmed || send.isEmpty()) {
       return
     }
     sendMessage(send.trim().deserializeMiraiCode())
   }
 
-  private val tokens = listOf<Pair<Regex,  (MatchResult) -> String>>(
+  private val tokens = listOf<Pair<Regex, (MatchResult) -> String>>(
     Regex("(.)不\\1得") to { randomChoiceSp(it) },
     Regex("(.)不\\1") to { randomChoice(it, "不") },
     Regex("(.)没\\1") to { randomChoice(it, "没") },
