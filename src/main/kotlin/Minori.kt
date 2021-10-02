@@ -30,6 +30,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       SetuCommand,
       EatCommand,
       LearnCommand,
+      InquireCommand,
     )
     data = listOf(LanguageData, MessageCache)
     Recorder.listen()
