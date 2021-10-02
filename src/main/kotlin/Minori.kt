@@ -6,12 +6,15 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.data.PluginData
+import net.mamoe.mirai.event.events.GroupMemberEvent
+import net.mamoe.mirai.event.events.MessageEvent
+import net.mamoe.mirai.event.globalEventChannel
 
 import me.iori.minori.commands.*
 import me.iori.minori.commands.simple.*
 import me.iori.minori.data.*
-import me.iori.minori.utils.Recorder
-import me.iori.minori.utils.Network
+import me.iori.minori.response.*
+import me.iori.minori.utils.*
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
   name("Minori")
@@ -22,6 +25,15 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
   private lateinit var data: List<PluginData>
 
   override fun onEnable() {
+    val channel = globalEventChannel(coroutineContext)
+
+    val responders = listOf(
+      MessageResponder(channel.filter { it is MessageEvent }),
+      MemberEventResponder(channel.filter { it is GroupMemberEvent }),
+    )
+
+    responders.forEach { it.listen() }
+
     commands = listOf(
       AskCommand,
       LuckCommand,
@@ -32,7 +44,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       LearnCommand,
       InquireCommand,
     )
-    data = listOf(LanguageData, MessageCache)
+    data = listOf(LanguageData, MessageCache, ResponsesData)
     Recorder.listen()
     Network.load()
 
