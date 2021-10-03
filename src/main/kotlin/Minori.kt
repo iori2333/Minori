@@ -15,6 +15,7 @@ import me.iori.minori.commands.simple.*
 import me.iori.minori.data.*
 import me.iori.minori.responders.MemberEventResponder
 import me.iori.minori.responders.MessageResponder
+import me.iori.minori.responders.Responder
 import me.iori.minori.utils.*
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
@@ -24,16 +25,15 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
 }) {
   private lateinit var commands: List<Command>
   private lateinit var data: List<PluginData>
+  private lateinit var responders: List<Responder>
 
   override fun onEnable() {
     val channel = globalEventChannel(coroutineContext)
 
-    val responders = listOf(
+    responders = listOf(
       MessageResponder(channel.filter { it is MessageEvent }),
       MemberEventResponder(channel.filter { it is GroupMemberEvent }),
     )
-
-    responders.forEach { it.listen() }
 
     commands = listOf(
       AskCommand,
@@ -44,6 +44,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       EatCommand,
       LearnCommand,
       InquireCommand,
+      CalcCommand,
     )
     data = listOf(LanguageData, MessageCache, ResponsesData)
     Recorder.listen()
@@ -51,6 +52,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
 
     data.forEach { it.reload() }
     commands.forEach { it.register() }
+    responders.forEach { it.listen() }
   }
 
   override fun onDisable() {
