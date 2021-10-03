@@ -16,7 +16,15 @@ object MessageSQL {
   """
   private const val INSERT_MESSAGE = """
     INSERT INTO messages
-    VALUES (?, ?, ?, ?)
+    VALUES (?, ?, ?, ?);
+  """
+
+  private const val SELECTOR = """
+    SELECT * FROM messages
+    WHERE groupId=? 
+    AND senderId=? 
+    AND content LIKE ?
+    ORDER BY time DESC;
   """
 
   private val conn: Connection
@@ -40,5 +48,24 @@ object MessageSQL {
     stmt.setInt(4, message.time)
 
     stmt.execute()
+  }
+
+  fun select(group: Long, sender: Long, message: String): List<RecordMessage> {
+    val stmt = conn.prepareStatement(SELECTOR)
+    stmt.setLong(1, group)
+    stmt.setLong(2, sender)
+    stmt.setString(3, "%${message}%")
+    val res = stmt.executeQuery()
+
+    val messages = mutableListOf<RecordMessage>()
+    val count = 0
+    while (res.next() && count < 20) {
+      val msgGroup = res.getLong(1)
+      val msgSender = res.getLong(2)
+      val content = res.getString(3)
+      val time = res.getInt(4)
+      messages.add(RecordMessage(msgSender, msgGroup, content = content, time = time))
+    }
+    return messages
   }
 }

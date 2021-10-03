@@ -1,6 +1,7 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
+import me.iori.minori.data.MessageSQL
 import me.iori.minori.utils.Addons.replaceAll
 import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.*
@@ -27,7 +28,7 @@ object LogCommand : CompositeCommand(
 
   @SubCommand
   @Description("返回群聊中最近几条消息")
-  suspend fun MemberCommandSender.last(k: Int) {
+  suspend fun MemberCommandSender.last(k: Int) = try {
     val messages = Recorder.recentMessage(group.id, k)
     val forward = buildForwardMessage(group) {
       messages.forEach {
@@ -39,11 +40,14 @@ object LogCommand : CompositeCommand(
       }
     }
     sendMessage(forward)
+  } catch (_: IllegalArgumentException) {
+    sendMessage("请求消息参数不正确")
   }
+
 
   @SubCommand
   @Description("返回群聊某用户最近几条消息")
-  suspend fun MemberCommandSender.last(user: User, k: Int) {
+  suspend fun MemberCommandSender.last(user: User, k: Int) = try {
     val messages = Recorder.memberMessage(group.id, user.id, k)
     val forward = buildForwardMessage(group) {
       messages.forEach {
@@ -51,6 +55,8 @@ object LogCommand : CompositeCommand(
       }
     }
     sendMessage(forward)
+  } catch (_: IllegalArgumentException) {
+    sendMessage("请求消息参数不正确")
   }
 
   @SubCommand
@@ -89,6 +95,29 @@ object LogCommand : CompositeCommand(
     }
     if (!forward.isContentEmpty()) {
       sendMessage(forward)
+    }
+  }
+
+  @SubCommand
+  @Description("按关键词查询成员聊天记录")
+  suspend fun MemberCommandSender.grep(user: User, message: MessageChain) {
+    val selected = MessageSQL.select(group.id, user.id, message.serializeToMiraiCode())
+    val count = selected.size
+    if (count > 0) {
+      val forward = buildForwardMessage(group) {
+        selected.forEach {
+          val sender = group[it.sender]
+          add(
+            senderId = it.sender,
+            senderName = sender?.nameCardOrNick ?: bot.nameCardOrNick,
+            message = it.content.deserializeMiraiCode()
+          )
+        }
+      }
+      sendMessage("${user.nameCardOrNick}说过${count}次这句话")
+      sendMessage(forward)
+    } else {
+      sendMessage("${user.nameCardOrNick}没有说过这句话哦")
     }
   }
 }

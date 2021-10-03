@@ -46,7 +46,13 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       InquireCommand,
       CalcCommand,
     )
-    data = listOf(LanguageData, MessageCache, ResponsesData)
+
+    data = listOf(
+      LanguageData,
+      MessageCache,
+      ResponsesData
+    )
+
     Recorder.listen()
     Network.load()
 
