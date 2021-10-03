@@ -8,8 +8,11 @@ import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.event.Event
 import net.mamoe.mirai.event.EventChannel
 import net.mamoe.mirai.event.subscribeMessages
+import kotlin.random.Random
 
 class MessageResponder(channel: EventChannel<Event>) : Responder(channel) {
+  private val prob = 0.5
+
   @OptIn(
     ExperimentalCommandDescriptors::class,
     net.mamoe.mirai.console.util.ConsoleExperimentalApi::class
@@ -28,7 +31,7 @@ class MessageResponder(channel: EventChannel<Event>) : Responder(channel) {
         )
       }
       ResponsesData.responses.forEach { (key, res) ->
-        contains(key) reply res.random()
+        contains(key) reply if (Random.nextDouble() < prob) res.random() else ""
       }
     }
   }
