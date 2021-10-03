@@ -31,7 +31,7 @@ class MessageResponder(channel: EventChannel<Event>) : Responder(channel) {
         )
       }
       ResponsesData.responses.forEach { (key, res) ->
-        contains(key) reply if (Random.nextDouble() < prob) res.random() else ""
+        contains(key) reply res.random()
       }
     }
   }

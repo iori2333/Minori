@@ -18,6 +18,7 @@ object CalcCommand : CompositeCommand(
   override val prefixOptional = true
 
   @SubCommand("dynamix", "dy")
+  @Description("计算Dynamix控分需求")
   suspend fun CommandSender.dynamix(target: Int, fullCombos: Int) {
     val ap = 1000000
     if (target < 0 || target > ap) {
@@ -43,6 +44,7 @@ object CalcCommand : CompositeCommand(
   }
 
   @SubCommand("arcaea", "arc")
+  @Description("计算Arcaea控分需求")
   suspend fun CommandSender.arcaea(target: Int, fullRecalls: Int) {
     val pm = 10000000
     val mpm = pm + fullRecalls

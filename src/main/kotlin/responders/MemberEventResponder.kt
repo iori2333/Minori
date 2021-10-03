@@ -21,7 +21,7 @@ class MemberEventResponder(channel: EventChannel<Event>) : Responder(channel) {
         )
         is MemberUnmuteEvent -> PlainText(
           "${it.member.nameCardOrNick}被善良的" +
-              "${it.operator ?: bot.nameCardOrNick}解除了禁言"
+              "${it.operator?.nameCardOrNick ?: bot.nameCardOrNick}解除了禁言"
         )
         is MemberCardChangeEvent -> PlainText("${it.origin}将群名片变更为了${it.new}")
         else -> return@subscribeAlways
