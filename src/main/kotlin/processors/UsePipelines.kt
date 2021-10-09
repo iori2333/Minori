@@ -26,7 +26,7 @@ object UsePipelines {
 
   fun String.parsePipelines(pipelines: List<Pair<Pipeline, String>>): String {
     var send = this
-    pipelines.map { (pipeline, params) -> send = pipeline.execute(send, params) }
+    pipelines.forEach { (pipeline, params) -> send = pipeline.execute(send, params) }
     return send
   }
 }
