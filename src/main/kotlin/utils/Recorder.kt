@@ -13,11 +13,10 @@ object Recorder {
 
   fun record(msg: RecordMessage) {
     addCache(msg)
-    MessageSQL.insertMessage(msg)
+    Database.insertMessage(msg)
   }
 
   fun dispose() {
-    MessageSQL.dispose()
     consoleLogger.info("Saving cache to disk")
     consoleLogger.info("Cache size: ${MessageCache.cache.entries.sumOf { it.value.size }} entries")
   }

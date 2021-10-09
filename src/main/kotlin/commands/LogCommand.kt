@@ -1,9 +1,9 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
-import me.iori.minori.utils.MessageSQL
 import me.iori.minori.utils.Addons.replaceAll
 import me.iori.minori.utils.Recorder
+import me.iori.minori.utils.Database
 import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.User
@@ -101,7 +101,7 @@ object LogCommand : CompositeCommand(
   @SubCommand
   @Description("按关键词查询成员聊天记录")
   suspend fun MemberCommandSender.grep(user: User, message: MessageChain) {
-    val (count, selected) = MessageSQL.selectMessage(group.id, user.id, message.serializeToMiraiCode())
+    val (count, selected) = Database.selectMessage(group.id, user.id, message.serializeToMiraiCode())
     if (count > 0) {
       val forward = buildForwardMessage(group) {
         selected.forEach {

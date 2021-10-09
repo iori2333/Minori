@@ -3,6 +3,10 @@ package me.iori.minori.utils
 import me.iori.minori.interfaces.RecordMessage
 import java.sql.*
 
+@Deprecated(
+  message = "Pure SQL version of database is now deprecated",
+  replaceWith = ReplaceWith("MessageDb", "me.iori.minori.utils.MinoriDb")
+)
 object MessageSQL {
   private const val URL = "jdbc:sqlite:data/Minori/minori.sqlite"
 
