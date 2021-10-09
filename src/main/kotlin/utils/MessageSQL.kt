@@ -6,6 +6,8 @@ import java.sql.*
 object MessageSQL {
   private const val URL = "jdbc:sqlite:data/Minori/minori.sqlite"
 
+  private const val MAX_QUERY = 20
+
   private const val CREATE_TABLE = """
     CREATE TABLE IF NOT EXISTS messages
     (
@@ -20,12 +22,20 @@ object MessageSQL {
     VALUES (?, ?, ?, ?);
   """
 
-  private const val SELECTOR = """
+  private const val SELECT_MSG = """
     SELECT * FROM messages
     WHERE groupId=? 
     AND senderId=? 
     AND content LIKE ?
-    ORDER BY time DESC;
+    ORDER BY time DESC
+    LIMIT $MAX_QUERY;
+  """
+
+  private const val SELECT_COUNT = """
+    SELECT COUNT(*) FROM messages
+    WHERE groupId=? 
+    AND senderId=? 
+    AND content LIKE ?
   """
 
   private val conn: Connection
@@ -51,15 +61,20 @@ object MessageSQL {
     stmt.execute()
   }
 
-  fun select(group: Long, sender: Long, message: String): List<RecordMessage> {
-    val stmt = conn.prepareStatement(SELECTOR)
-    stmt.setLong(1, group)
-    stmt.setLong(2, sender)
-    stmt.setString(3, "%${message}%")
-    val res = stmt.executeQuery()
+  fun selectMessage(group: Long, sender: Long, message: String): Pair<Int, List<RecordMessage>> {
+    val stmt1 = conn.prepareStatement(SELECT_MSG)
+    val stmt2 = conn.prepareStatement(SELECT_COUNT)
+    stmt1.setLong(1, group)
+    stmt1.setLong(2, sender)
+    stmt1.setString(3, "%${message}%")
 
+    stmt2.setLong(1, group)
+    stmt2.setLong(2, sender)
+    stmt2.setString(3, "%${message}%")
+
+    val res = stmt1.executeQuery()
     val messages = mutableListOf<RecordMessage>()
-    while (res.next() && messages.size < 20) {
+    while (res.next()) {
       val rec = RecordMessage(
         group = res.getLong(1),
         sender = res.getLong(2),
@@ -68,6 +83,7 @@ object MessageSQL {
       )
       messages.add(rec)
     }
-    return messages
+    val count = stmt2.executeQuery().getInt(1)
+    return Pair(count, messages)
   }
 }

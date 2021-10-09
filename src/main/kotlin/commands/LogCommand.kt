@@ -101,8 +101,7 @@ object LogCommand : CompositeCommand(
   @SubCommand
   @Description("按关键词查询成员聊天记录")
   suspend fun MemberCommandSender.grep(user: User, message: MessageChain) {
-    val selected = MessageSQL.select(group.id, user.id, message.serializeToMiraiCode())
-    val count = selected.size
+    val (count, selected) = MessageSQL.selectMessage(group.id, user.id, message.serializeToMiraiCode())
     if (count > 0) {
       val forward = buildForwardMessage(group) {
         selected.forEach {
