@@ -4,6 +4,8 @@ import me.iori.minori.Minori
 import me.iori.minori.data.LanguageData
 import me.iori.minori.processors.UseInlines.parseInlines
 import me.iori.minori.processors.UsePipelines
+import me.iori.minori.processors.UsePipelines.parsePipelines
+import me.iori.minori.processors.UsePipelines.toPipelines
 import me.iori.minori.utils.Recorder
 
 import net.mamoe.mirai.console.command.CommandManager
@@ -30,16 +32,18 @@ object AskCommand : RawCommand(
   owner = Minori,
   primaryName = "问",
   description = "让Minori回答问题",
-), UsePipelines {
+) {
   override val usage = "(/)$primaryName    # $description"
 
   override suspend fun CommandSender.onCommand(args: MessageChain) {
     val group = this.getGroupOrNull()
-    val (text, pipelines) = preProcess(args.joinToString(" ") {
+    val (text, pipelines) = args.joinToString(" ") {
       it.toMessageChain().serializeToMiraiCode()
-    })
+    }.toPipelines()
     val trimmed = text.trim().removePrefix(primaryName)
-    val send = postProcess(getResponse(group, trimmed), pipelines).parseInlines()
+    val send = getResponse(group, trimmed)
+      .parseInlines()
+      .parsePipelines(pipelines)
     if (send == trimmed || send.isEmpty()) {
       return
     }

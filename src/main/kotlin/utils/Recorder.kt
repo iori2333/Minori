@@ -1,40 +1,23 @@
 package me.iori.minori.utils
 
 import me.iori.minori.data.MessageCache
-import me.iori.minori.data.MessageSQL
-import me.iori.minori.data.RecordMessage
+import me.iori.minori.interfaces.RecordMessage
 
 import net.mamoe.mirai.console.terminal.consoleLogger
-import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.Listener
-import net.mamoe.mirai.event.events.GroupMessageEvent
 import kotlin.math.min
 
 object Recorder {
-  private lateinit var listener: Listener<GroupMessageEvent>
   private const val MAX_RECALL = 20
   private const val MAX_TOKEN_SIZE = 10
   private const val MAX_CACHE_SIZE = 1000
 
-  fun listen() {
-    listener = GlobalEventChannel.subscribeAlways {
-      val msg = RecordMessage(
-        it.sender.id,
-        it.group.id,
-        it.source.ids,
-        it.source.internalIds,
-        it.source.time,
-        it.message.serializeToMiraiCode()
-      )
-
-      addCache(msg)
-      MessageSQL.insertMessage(it.group.id, it.sender.id, msg)
-    }
+  fun record(msg: RecordMessage) {
+    addCache(msg)
+    MessageSQL.insertMessage(msg)
   }
 
   fun dispose() {
     MessageSQL.dispose()
-    listener.complete()
     consoleLogger.info("Saving cache to disk")
     consoleLogger.info("Cache size: ${MessageCache.cache.entries.sumOf { it.value.size }} entries")
   }

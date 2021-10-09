@@ -1,5 +1,6 @@
 package me.iori.minori.processors.inlines
 
+import me.iori.minori.interfaces.InlineCommand
 import kotlin.random.Random
 
 object OptionalInline : InlineCommand(

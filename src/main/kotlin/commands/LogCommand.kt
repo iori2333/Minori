@@ -1,7 +1,7 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
-import me.iori.minori.data.MessageSQL
+import me.iori.minori.utils.MessageSQL
 import me.iori.minori.utils.Addons.replaceAll
 import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.*

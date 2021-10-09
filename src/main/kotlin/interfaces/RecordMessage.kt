@@ -1,4 +1,4 @@
-package me.iori.minori.data
+package me.iori.minori.interfaces
 
 import kotlinx.serialization.Serializable
 

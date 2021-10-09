@@ -1,5 +1,7 @@
 package me.iori.minori.processors.pipelines
 
+import me.iori.minori.interfaces.Pipeline
+
 object GrepPipeline : Pipeline("grep") {
   private const val GREP_START = "<<"
   private const val GREP_END = ">>"

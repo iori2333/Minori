@@ -1,4 +1,4 @@
-package me.iori.minori.responders
+package me.iori.minori.interfaces
 
 import net.mamoe.mirai.event.Event
 import net.mamoe.mirai.event.EventChannel

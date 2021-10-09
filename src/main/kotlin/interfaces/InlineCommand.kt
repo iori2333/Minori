@@ -1,4 +1,4 @@
-package me.iori.minori.processors.inlines
+package me.iori.minori.interfaces
 
 abstract class InlineCommand(
   protected val name: String,

@@ -1,4 +1,4 @@
-package me.iori.minori.commands.simple
+package me.iori.minori.interfaces
 
 import me.iori.minori.Minori
 import net.mamoe.mirai.console.command.CommandSender
@@ -9,7 +9,7 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
   ConsoleExperimentalApi::class,
   net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors::class
 )
-abstract class SourceCommandBase(
+abstract class SourceCommand(
   name: String,
   description: String,
   protected val entries: List<String>,

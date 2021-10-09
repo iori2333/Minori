@@ -1,5 +1,6 @@
-package me.iori.minori.data
+package me.iori.minori.utils
 
+import me.iori.minori.interfaces.RecordMessage
 import java.sql.*
 
 object MessageSQL {
@@ -40,10 +41,10 @@ object MessageSQL {
     conn.close()
   }
 
-  fun insertMessage(group: Long, sender: Long, message: RecordMessage) {
+  fun insertMessage(message: RecordMessage) {
     val stmt = conn.prepareStatement(INSERT_MESSAGE)
-    stmt.setLong(1, group)
-    stmt.setLong(2, sender)
+    stmt.setLong(1, message.group)
+    stmt.setLong(2, message.sender)
     stmt.setString(3, message.content)
     stmt.setInt(4, message.time)
 
@@ -58,13 +59,14 @@ object MessageSQL {
     val res = stmt.executeQuery()
 
     val messages = mutableListOf<RecordMessage>()
-    val count = 0
-    while (res.next() && count < 20) {
-      val msgGroup = res.getLong(1)
-      val msgSender = res.getLong(2)
-      val content = res.getString(3)
-      val time = res.getInt(4)
-      messages.add(RecordMessage(msgSender, msgGroup, content = content, time = time))
+    while (res.next() && messages.size < 20) {
+      val rec = RecordMessage(
+        group = res.getLong(1),
+        sender = res.getLong(2),
+        content = res.getString(3),
+        time = res.getInt(4)
+      )
+      messages.add(rec)
     }
     return messages
   }

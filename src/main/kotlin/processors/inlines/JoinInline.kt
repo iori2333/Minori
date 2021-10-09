@@ -1,5 +1,7 @@
 package me.iori.minori.processors.inlines
 
+import me.iori.minori.interfaces.InlineCommand
+
 object JoinInline : InlineCommand(
   "join",
   Regex("join (.+)")

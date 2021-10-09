@@ -13,10 +13,10 @@ import net.mamoe.mirai.event.globalEventChannel
 import me.iori.minori.commands.*
 import me.iori.minori.commands.simple.*
 import me.iori.minori.data.*
-import me.iori.minori.responders.MemberEventResponder
-import me.iori.minori.responders.MessageResponder
-import me.iori.minori.responders.Responder
+import me.iori.minori.interfaces.Responder
+import me.iori.minori.responders.*
 import me.iori.minori.utils.*
+import net.mamoe.mirai.event.events.MessagePreSendEvent
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
   name("Minori")
@@ -33,6 +33,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
     responders = listOf(
       MessageResponder(channel.filter { it is MessageEvent }),
       MemberEventResponder(channel.filter { it is GroupMemberEvent }),
+      PreSendResponder(channel.filter { it is MessagePreSendEvent }),
     )
 
     commands = listOf(
@@ -45,6 +46,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       LearnCommand,
       InquireCommand,
       CalcCommand,
+      PoemCommand,
     )
 
     data = listOf(
@@ -53,7 +55,6 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       ResponsesData
     )
 
-    Recorder.listen()
     Network.load()
 
     data.forEach { it.reload() }

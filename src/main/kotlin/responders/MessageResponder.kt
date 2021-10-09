@@ -2,6 +2,9 @@ package me.iori.minori.responders
 
 import me.iori.minori.commands.AskCommand
 import me.iori.minori.data.ResponsesData
+import me.iori.minori.interfaces.Responder
+import me.iori.minori.utils.Addons.toRecord
+import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.command.CommandSender.Companion.toCommandSender
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -10,15 +13,18 @@ import net.mamoe.mirai.event.EventChannel
 import net.mamoe.mirai.event.subscribeMessages
 import kotlin.random.Random
 
-class MessageResponder(channel: EventChannel<Event>) : Responder(channel) {
-  private val prob = 0.5
-
-  @OptIn(
-    ExperimentalCommandDescriptors::class,
-    net.mamoe.mirai.console.util.ConsoleExperimentalApi::class
-  )
+@OptIn(
+  ExperimentalCommandDescriptors::class,
+  net.mamoe.mirai.console.util.ConsoleExperimentalApi::class
+)
+class MessageResponder(
+  channel: EventChannel<Event>,
+  private val prob: Double = 0.3,
+) : Responder(channel) {
   override fun listen() {
     channel.subscribeMessages {
+      always { Recorder.record(toRecord()) }
+
       startsWith(
         prefix = "问",
         removePrefix = false,
@@ -30,8 +36,12 @@ class MessageResponder(channel: EventChannel<Event>) : Responder(channel) {
           checkPermission = true
         )
       }
+
       ResponsesData.responses.forEach { (key, res) ->
-        contains(key) reply res.random()
+        contains(key) {
+          if (Random.nextDouble() < prob)
+            subject.sendMessage(res.random())
+        }
       }
     }
   }
