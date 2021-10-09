@@ -12,6 +12,7 @@ dependencies {
   api("net.mamoe:mirai-console-terminal:2.7.1") // 自行替换版本
   api("net.mamoe:mirai-core:2.7.1")
   implementation("org.ktorm:ktorm-core:3.4.1")
+  implementation("org.ktorm:ktorm-support-sqlite:3.4.1")
   implementation("org.xerial:sqlite-jdbc:3.36.0.3")
 }
 

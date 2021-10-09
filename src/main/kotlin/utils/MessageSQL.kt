@@ -5,7 +5,7 @@ import java.sql.*
 
 @Deprecated(
   message = "Pure SQL version of database is now deprecated",
-  replaceWith = ReplaceWith("MessageDb", "me.iori.minori.utils.MinoriDb")
+  replaceWith = ReplaceWith("Database", "me.iori.minori.utils.Database")
 )
 object MessageSQL {
   private const val URL = "jdbc:sqlite:data/Minori/minori.sqlite"

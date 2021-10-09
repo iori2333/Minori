@@ -3,14 +3,17 @@ package me.iori.minori.utils
 import me.iori.minori.interfaces.RecordMessage
 import me.iori.minori.utils.tables.Messages
 import org.ktorm.database.Database
+import org.ktorm.database.SqlDialect
 import org.ktorm.dsl.*
+import org.ktorm.support.sqlite.SQLiteDialect
 
 object Database {
   private const val MAX_QUERY = 20
 
   private val db = Database.connect(
     url = "jdbc:sqlite:data/Minori/minori.sqlite",
-    driver = "org.sqlite.JDBC"
+    driver = "org.sqlite.JDBC",
+    dialect = SQLiteDialect(),
   )
 
   fun insertMessage(message: RecordMessage) {
@@ -45,6 +48,7 @@ object Database {
       .whereWithConditions {
         it += Messages.groupId eq group
         it += Messages.senderId eq sender
+        it += Messages.content like "%$message%"
       }
       .map { it.getInt(1) }
       .first()
