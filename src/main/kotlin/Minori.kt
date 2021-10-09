@@ -1,22 +1,22 @@
 package me.iori.minori
 
+import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
+import net.mamoe.mirai.console.data.PluginData
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.console.command.Command
-import net.mamoe.mirai.console.data.PluginData
+import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.events.GroupMemberEvent
 import net.mamoe.mirai.event.events.MessageEvent
-import net.mamoe.mirai.event.globalEventChannel
+import net.mamoe.mirai.event.events.MessagePreSendEvent
 
 import me.iori.minori.commands.*
 import me.iori.minori.commands.simple.*
 import me.iori.minori.data.*
-import me.iori.minori.interfaces.Responder
+import me.iori.minori.interfaces.*
 import me.iori.minori.responders.*
 import me.iori.minori.utils.*
-import net.mamoe.mirai.event.events.MessagePreSendEvent
 
 object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
   name("Minori")
@@ -54,8 +54,6 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       MessageCache,
       ResponsesData
     )
-
-    Network.load()
 
     data.forEach { it.reload() }
     commands.forEach { it.register() }

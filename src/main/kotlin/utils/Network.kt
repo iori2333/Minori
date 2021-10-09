@@ -7,16 +7,12 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 object Network {
-  lateinit var client: HttpClient
+  val client = HttpClient()
 
   val jsonBuilder = Json {
     prettyPrint = true
     isLenient = true
     ignoreUnknownKeys = true
-  }
-
-  fun load() {
-    client = HttpClient()
   }
 
   fun dispose() {
