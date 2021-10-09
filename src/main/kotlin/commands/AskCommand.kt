@@ -36,6 +36,7 @@ object AskCommand : RawCommand(
     }.toPipelines()
     val trimmed = text.trim().removePrefix(primaryName)
     val send = trimmed
+      .replaceTokens()
       .getResponse(group)
       .parseInlines()
       .parsePipelines(pipelines)
@@ -44,6 +45,11 @@ object AskCommand : RawCommand(
     }
     sendMessage(send.trim().deserializeMiraiCode())
   }
+
+  private val replacements = listOf(
+    Regex("[您你]") to listOf("我", "爷", "菜菜", "仆", "俺"),
+    Regex("[我爷俺]") to listOf("你", "您", "贵方", "阁下", "椰叶"),
+  )
 
   private val tokens = listOf<Pair<Regex, (MatchResult) -> String>>(
     Regex("(.)不\\1得") to { randomChoiceSp(it) },
@@ -72,6 +78,12 @@ object AskCommand : RawCommand(
       tokensWithGroup.forEach { res = res.replace(it.first) { _ -> it.second(group) } }
     }
     return res
+  }
+
+  private fun String.replaceTokens(): String {
+    var ret = this
+    replacements.forEach { (from, to) -> ret = ret.replace(from) { to.random() } }
+    return ret
   }
 
   private fun randomChoice(match: MatchResult, split: String) =
