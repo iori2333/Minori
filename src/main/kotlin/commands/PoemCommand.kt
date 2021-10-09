@@ -2,11 +2,9 @@ package me.iori.minori.commands
 
 import me.iori.minori.Minori
 import me.iori.minori.utils.Recorder
-import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.MemberCommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.contact.nameCardOrNick
 
 object PoemCommand : SimpleCommand(
@@ -25,7 +23,8 @@ object PoemCommand : SimpleCommand(
     "%s，%s。\n%s，%s？\n%s，%s，%s。\n%s，%s，%s！"
   )
 
-  private fun buildPoem(title: String, poet: String, content: String): String = "《$title》\n$poet\n$content"
+  private fun buildPoem(title: String, poet: String, content: String): String =
+    "《$title》\n$poet\n$content"
 
   @Handler
   suspend fun MemberCommandSender.onCommand() {

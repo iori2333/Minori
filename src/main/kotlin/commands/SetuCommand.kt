@@ -3,9 +3,9 @@ package me.iori.minori.commands
 import java.io.File
 import io.ktor.client.request.*
 import io.ktor.network.sockets.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlin.concurrent.thread
+import kotlin.random.Random
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.RawCommand
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
@@ -14,7 +14,6 @@ import net.mamoe.mirai.message.data.content
 
 import me.iori.minori.Minori
 import me.iori.minori.utils.Network
-import kotlin.random.Random
 
 object SetuCommand : RawCommand(
   owner = Minori,
@@ -62,13 +61,13 @@ object SetuCommand : RawCommand(
     val img = r.data.first()
     val urlString = img.urls[QUALITY] as String
     try {
-      val rawImage = Network.get<ByteArray>(urlString)
-      val file = File("$STORAGE_PATH/${img.pid}${img.uid}.${img.ext}")
+      val rawImage: ByteArray = Network.get(urlString)
 
-      withContext(Dispatchers.IO) {
-        @Suppress("BlockingMethodInNonBlockingContext") // 麻了
+      thread {
+        val file = File(STORAGE_PATH + "/" + img.pid + img.uid + "." + img.ext)
         file.outputStream().write(rawImage)
       }
+
       subject?.sendImage(rawImage.inputStream())
         ?.recallIn((Random.nextInt(20, 40) * 1000).toLong())
     } catch (_: ConnectTimeoutException) {

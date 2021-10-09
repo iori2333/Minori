@@ -3,24 +3,18 @@ package me.iori.minori.commands
 import me.iori.minori.Minori
 import me.iori.minori.data.LanguageData
 import me.iori.minori.processors.UseInlines.parseInlines
-import me.iori.minori.processors.UsePipelines
 import me.iori.minori.processors.UsePipelines.parsePipelines
 import me.iori.minori.processors.UsePipelines.toPipelines
 import me.iori.minori.utils.Recorder
 
-import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.command.CommandSender
-import net.mamoe.mirai.console.command.CommandSender.Companion.toCommandSender
 import net.mamoe.mirai.console.command.RawCommand
 import net.mamoe.mirai.console.command.getGroupOrNull
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.nameCardOrNick
-import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.message.data.toMessageChain
 import kotlin.random.Random
 
@@ -41,7 +35,8 @@ object AskCommand : RawCommand(
       it.toMessageChain().serializeToMiraiCode()
     }.toPipelines()
     val trimmed = text.trim().removePrefix(primaryName)
-    val send = getResponse(group, trimmed)
+    val send = trimmed
+      .getResponse(group)
       .parseInlines()
       .parsePipelines(pipelines)
     if (send == trimmed || send.isEmpty()) {
@@ -67,11 +62,11 @@ object AskCommand : RawCommand(
     Regex("什么") to { randomContent(it) },
   )
 
-  private fun getResponse(group: Group?, text: String): String {
-    if (LanguageData.excludedPrefixes.any { text.startsWith(it) }) {
+  private fun String.getResponse(group: Group?): String {
+    if (LanguageData.excludedPrefixes.any { this.startsWith(it) }) {
       return ""
     }
-    var res = text.split("还是").random()
+    var res = this.split("还是").random()
     tokens.forEach { res = res.replace(it.first, it.second) }
     if (group != null) {
       tokensWithGroup.forEach { res = res.replace(it.first) { _ -> it.second(group) } }
