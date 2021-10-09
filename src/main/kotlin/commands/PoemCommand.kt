@@ -25,14 +25,12 @@ object PoemCommand : SimpleCommand(
     "%s，%s。\n%s，%s？\n%s，%s，%s。\n%s，%s，%s！"
   )
 
+  private fun buildPoem(title: String, poet: String, content: String): String = "《$title》\n$poet\n$content"
+
   @Handler
   suspend fun MemberCommandSender.onCommand() {
     val poem = templates.random().replace(Regex("%s")) { Recorder.randomMessage(group.id) }
-    val send = """
-      《${Recorder.randomMessage(group.id)}》
-      ${group.members.random().nameCardOrNick}
-      $poem
-    """.trimIndent()
+    val send = buildPoem(Recorder.randomMessage(group.id), group.members.random().nameCardOrNick, poem)
     sendMessage(send)
   }
 }

@@ -9,6 +9,12 @@ import kotlinx.serialization.json.Json
 object Network {
   lateinit var client: HttpClient
 
+  val jsonBuilder = Json {
+    prettyPrint = true
+    isLenient = true
+    ignoreUnknownKeys = true
+  }
+
   fun load() {
     client = HttpClient()
   }
@@ -19,12 +25,6 @@ object Network {
 
   suspend inline fun <reified T> get(urlString: String, block: HttpRequestBuilder.() -> Unit = {}): T {
     return client.get(urlString, block)
-  }
-
-  val jsonBuilder = Json {
-    prettyPrint = true
-    isLenient = true
-    ignoreUnknownKeys = true
   }
 
   @OptIn(ExperimentalSerializationApi::class)
