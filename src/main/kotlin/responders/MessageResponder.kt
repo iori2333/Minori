@@ -25,33 +25,9 @@ class MessageResponder(
   channel: EventChannel<Event>,
   private val prob: Double = 0.3,
 ) : Responder(channel) {
-  private suspend fun arcHandler(im: Image): String = try {
-    val res = Network.json<Map<String, Double>>("http://127.0.0.1:5000/arc") {
-      parameter("img", im.queryUrl())
-    }
-    if (res.containsKey("ex")) {
-      "您！！"
-    } else if (res.containsKey("aa")) {
-      "瞎了"
-    } else {
-      ""
-    }
-  } catch (_: Exception) {
-    ""
-  }
-
   override fun listen() {
     channel.subscribeMessages {
-      always {
-        Recorder.record(toRecord())
-        val msg = message.last()
-        if (msg is Image) {
-          val send = arcHandler(msg)
-          if (send.isNotEmpty()) {
-            subject.sendMessage(send)
-          }
-        }
-      }
+      always { Recorder.record(toRecord()) }
 
       startsWith(
         prefix = "问",

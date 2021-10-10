@@ -1,22 +1,13 @@
 package me.iori.minori.utils
 
 import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import okhttp3.ConnectionPool
-import java.util.concurrent.TimeUnit
 
 object Network {
-  val client = HttpClient(OkHttp) {
-    engine {
-      config {
-        connectionPool(ConnectionPool(5, 15, TimeUnit.SECONDS))
-      }
-    }
-  }
+  val client = HttpClient()
 
   val jsonBuilder = Json {
     prettyPrint = true
