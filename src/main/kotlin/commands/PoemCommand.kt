@@ -1,6 +1,7 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
+import me.iori.minori.processors.UsePipelines.pipelining
 import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.MemberCommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -29,7 +30,11 @@ object PoemCommand : SimpleCommand(
   @Handler
   suspend fun MemberCommandSender.onCommand() {
     val poem = templates.random().replace(Regex("%s")) { Recorder.randomMessage(group.id) }
-    val send = buildPoem(Recorder.randomMessage(group.id), group.members.random().nameCardOrNick, poem)
+    val send = buildPoem(
+      title = Recorder.randomMessage(group.id),
+      poet = group.members.random().nameCardOrNick,
+      content = poem
+    ).pipelining()
     sendMessage(send)
   }
 }

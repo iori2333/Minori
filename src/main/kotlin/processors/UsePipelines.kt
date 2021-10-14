@@ -29,4 +29,9 @@ object UsePipelines {
     pipelines.forEach { (pipeline, params) -> send = pipeline.execute(send, params) }
     return send
   }
+
+  fun String.pipelining(): String {
+    val (text, pipelines) = this.toPipelines()
+    return text.parsePipelines(pipelines)
+  }
 }

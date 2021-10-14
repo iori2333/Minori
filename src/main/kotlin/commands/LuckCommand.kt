@@ -2,6 +2,7 @@ package me.iori.minori.commands
 
 import me.iori.minori.Minori
 import me.iori.minori.data.LanguageData
+import me.iori.minori.processors.UsePipelines.pipelining
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
@@ -39,7 +40,7 @@ object LuckCommand : SimpleCommand(
       $rank
       宜：${shuffled.subList(0, 3).joinToString("、")}
       忌：${shuffled.subList(3, 6).joinToString("、")}
-    """.trimIndent()
+    """.trimIndent().pipelining()
 
     sendMessage(send)
   }
