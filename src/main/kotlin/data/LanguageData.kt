@@ -25,4 +25,7 @@ object LanguageData : ReadOnlyPluginData("LanguageData") {
 
   // for PingCommand
   val responses: List<String> by value()
+
+  // for NameCommand
+  val names: Map<String, List<String>> by value()
 }

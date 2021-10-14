@@ -47,6 +47,7 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       InquireCommand,
       CalcCommand,
       PoemCommand,
+      NameCommand,
     )
 
     data = listOf(
