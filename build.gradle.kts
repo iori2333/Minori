@@ -1,11 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  val kotlinVersion = "1.5.10"
-
-  kotlin("jvm") version kotlinVersion
-  kotlin("plugin.serialization") version kotlinVersion
-  id("net.mamoe.mirai-console") version "2.7.1"
+  kotlin("jvm")
+  kotlin("plugin.serialization")
+  id("net.mamoe.mirai-console")
 }
 
 dependencies {
@@ -29,4 +27,6 @@ tasks.withType<KotlinCompile>() {
   kotlinOptions.jvmTarget = "11"
 }
 
-kotlin.sourceSets.all { languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn") }
+kotlin.sourceSets.all {
+  languageSettings.optIn("kotlin.RequiresOptIn")
+}
