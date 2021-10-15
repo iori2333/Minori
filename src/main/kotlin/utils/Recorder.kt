@@ -2,6 +2,7 @@ package me.iori.minori.utils
 
 import me.iori.minori.data.MessageCache
 import me.iori.minori.interfaces.RecordMessage
+import me.iori.minori.utils.Addons.sample
 
 import net.mamoe.mirai.console.terminal.consoleLogger
 import kotlin.math.min
@@ -45,6 +46,10 @@ object Recorder {
 
   fun randomMessage(group: Long): String {
     return MessageCache.tokens[group.toString()]?.random() ?: ""
+  }
+
+  fun randomMessages(group: Long, k: Int): List<String> {
+    return MessageCache.tokens[group.toString()]?.sample(k) ?: listOf()
   }
 
   fun recentMessage(group: Long, k: Int): List<RecordMessage> {

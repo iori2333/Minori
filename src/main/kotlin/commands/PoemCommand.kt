@@ -1,7 +1,6 @@
 package me.iori.minori.commands
 
 import me.iori.minori.Minori
-import me.iori.minori.processors.UsePipelines.pipelining
 import me.iori.minori.utils.Recorder
 import net.mamoe.mirai.console.command.MemberCommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -20,8 +19,8 @@ object PoemCommand : SimpleCommand(
   override val prefixOptional = true
 
   private val templates = listOf(
-    "%s，%s。\n%s，%s。\n%s，%s。\n%s，%s。",
-    "%s，%s。\n%s，%s？\n%s，%s，%s。\n%s，%s，%s！"
+    "%s，%s。\n%s，%s。\n%s，%s。\n%s，%s。" to 8,
+    "%s，%s。\n%s，%s？\n%s，%s，%s。\n%s，%s，%s！" to 10
   )
 
   private fun buildPoem(title: String, poet: String, content: String): String =
@@ -29,12 +28,12 @@ object PoemCommand : SimpleCommand(
 
   @Handler
   suspend fun MemberCommandSender.onCommand() {
-    val poem = templates.random().replace(Regex("%s")) { Recorder.randomMessage(group.id) }
+    val (format, count) = templates.random()
     val send = buildPoem(
       title = Recorder.randomMessage(group.id),
       poet = group.members.random().nameCardOrNick,
-      content = poem
-    ).pipelining()
+      content = format.format(Recorder.randomMessages(group.id, count))
+    )
     sendMessage(send)
   }
 }

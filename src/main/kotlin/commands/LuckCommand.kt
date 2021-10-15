@@ -2,7 +2,7 @@ package me.iori.minori.commands
 
 import me.iori.minori.Minori
 import me.iori.minori.data.LanguageData
-import me.iori.minori.processors.UsePipelines.pipelining
+import me.iori.minori.utils.Addons.sample
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
@@ -33,14 +33,14 @@ object LuckCommand : SimpleCommand(
     val seed = calendar.timeInMillis / 1000 + (user?.id ?: 0)
     val random = Random(seed)
     val rank = LanguageData.ranks.random(random)
-    val shuffled = LanguageData.events.shuffled(random).subList(0, 6)
+    val shuffled = LanguageData.events.sample(6, random)
 
     val send = """
       ${user?.nameCardOrNick ?: user?.id ?: 0}的今日运势：
       $rank
       宜：${shuffled.subList(0, 3).joinToString("、")}
       忌：${shuffled.subList(3, 6).joinToString("、")}
-    """.trimIndent().pipelining()
+    """.trimIndent()
 
     sendMessage(send)
   }
