@@ -4,7 +4,8 @@ import me.iori.minori.interfaces.Pipeline
 import me.iori.minori.processors.pipelines.*
 
 object UsePipelines {
-  private val pipelines = mapOf<String, Pipeline>(
+  private val pipelines = mapOf(
+    "replace" to ReplacePipeline,
     "grep" to GrepPipeline
   )
 
@@ -12,7 +13,7 @@ object UsePipelines {
     val segments = this.split("|").map { it.trim() }
     val ret = segments.first()
 
-    val preprocessed = segments.subList(1, segments.size)
+    val preprocessed = segments.drop(1)
     return try {
       Pair(ret, preprocessed.map {
         pipelines.firstNotNullOf { (key, value) ->
