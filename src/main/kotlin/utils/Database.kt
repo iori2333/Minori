@@ -30,9 +30,12 @@ object Database {
       .select(Messages.content, Messages.time)
       .whereWithConditions {
         it += Messages.groupId eq group
-        it += Messages.senderId eq sender
+        if (sender != 0L) {
+          it += Messages.senderId eq sender
+        }
         it += Messages.content like "%$message%"
       }
+      .orderBy(Messages.time.desc())
       .limit(MAX_QUERY)
       .map {
         RecordMessage(

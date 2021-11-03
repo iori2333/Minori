@@ -119,4 +119,26 @@ object LogCommand : CompositeCommand(
       sendMessage("${user.nameCardOrNick}没有说过这句话哦")
     }
   }
+
+  @SubCommand
+  @Description("按关键词查询所有成员聊天记录")
+  suspend fun MemberCommandSender.greps(message: MessageChain) {
+    val (count, selected) = Database.selectMessage(group.id, 0, message.serializeToMiraiCode())
+    if (count > 0) {
+      val forward = buildForwardMessage(group) {
+        selected.forEach {
+          val sender = group[it.sender]
+          add(
+            senderId = it.sender,
+            senderName = sender?.nameCardOrNick ?: bot.nameCardOrNick,
+            message = it.content.deserializeMiraiCode()
+          )
+        }
+      }
+      sendMessage("群友们共说过${count}次这句话")
+      sendMessage(forward)
+    } else {
+      sendMessage("没有人说过这句话哦")
+    }
+  }
 }
