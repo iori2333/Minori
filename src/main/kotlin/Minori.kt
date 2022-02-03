@@ -48,12 +48,14 @@ object Minori : KotlinPlugin(JvmPluginDescription("me.iori.minori", "0.2") {
       CalcCommand,
       PoemCommand,
       NameCommand,
+      WordleCommand,
     )
 
     data = listOf(
       LanguageData,
       MessageCache,
-      ResponsesData
+      ResponsesData,
+      WordleData,
     )
 
     data.forEach { it.reload() }
