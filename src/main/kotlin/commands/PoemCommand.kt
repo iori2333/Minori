@@ -32,7 +32,7 @@ object PoemCommand : SimpleCommand(
     val send = buildPoem(
       title = Recorder.randomMessage(group.id),
       poet = group.members.random().nameCardOrNick,
-      content = format.format(Recorder.randomMessages(group.id, count))
+      content = format.format(*Recorder.randomMessages(group.id, count).toTypedArray())
     )
     sendMessage(send)
   }
