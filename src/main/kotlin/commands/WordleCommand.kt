@@ -5,7 +5,10 @@ import me.iori.minori.data.WordleData
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
+import net.mamoe.mirai.console.command.getGroupOrNull
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.PlainText
 
 object WordleCommand : CompositeCommand(
   owner = Minori,
@@ -15,7 +18,7 @@ object WordleCommand : CompositeCommand(
   @OptIn(ConsoleExperimentalApi::class, ExperimentalCommandDescriptors::class)
   override val prefixOptional = true
 
-  class GuessSession(private val answer: String) {
+  class GuessSession(val answer: String) {
     private val trials: MutableList<Pair<String, String>> = mutableListOf()
 
     val length: Int = answer.length
@@ -44,7 +47,7 @@ object WordleCommand : CompositeCommand(
 
   private const val LIMITS = 6
 
-  private val answers = mutableMapOf<Long, GuessSession>()
+  private val sessions = mutableMapOf<Long, GuessSession>()
 
   @SubCommand
   @Description("Start a wordle game")
@@ -57,10 +60,17 @@ object WordleCommand : CompositeCommand(
     println(word)
 
     val id = user?.id ?: 0
-    if (answers.containsKey(id)) {
-      sendMessage("A guess session has been started")
+    val prefix = if (getGroupOrNull() == null) {
+      PlainText("")
     } else {
-      answers[id] = GuessSession(word)
+      At(id)
+    }
+
+    if (sessions.containsKey(id)) {
+      sendMessage(prefix + "A guess session has been started")
+    } else {
+      sessions[id] = GuessSession(word)
+      sendMessage(prefix + "Wordle game started!")
     }
   }
 
@@ -68,26 +78,31 @@ object WordleCommand : CompositeCommand(
   @Description("Guess answer")
   suspend fun CommandSender.w(word: String) {
     val id = user?.id ?: 0
+    val prefix = if (getGroupOrNull() == null) {
+      PlainText("")
+    } else {
+      At(id)
+    }
 
-    if (!answers.containsKey(id)) {
-      sendMessage("There's no Wordle games")
+    if (!sessions.containsKey(id)) {
+      sendMessage(prefix + "There's no Wordle games")
       return
     }
 
-    val session = answers[id]!!
+    val session = sessions[id]!!
     if (word.length != session.length || !WordleData.words["l${word.length}"]!!.contains(word)) {
-      sendMessage("Not a valid guess")
+      sendMessage(prefix + "Not a valid guess")
       return
     }
 
     if (session.guess(word)) {
-      sendMessage("Magnificent! (${session.count()}/$LIMITS)\nStat:\n${session.stat()}")
-      answers.remove(id)
-    } else if (session.count() <= LIMITS) {
-      sendMessage("Current(${session.count()}/$LIMITS):\n${session.stat()}")
+      sendMessage(prefix + "Magnificent! (${session.count()}/$LIMITS)\nStat:\n${session.stat()}")
+      sessions.remove(id)
+    } else if (session.count() < LIMITS) {
+      sendMessage(prefix + "Current(${session.count()}/$LIMITS):\n${session.stat()}")
     } else {
-      sendMessage("Limit exceeded.\nStat:\n${session.stat()}")
-      answers.remove(id)
+      sendMessage(prefix + "Limit exceeded. Answer: ${session.answer}\nStat:\n${session.stat()}")
+      sessions.remove(id)
     }
   }
 }
