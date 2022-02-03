@@ -49,9 +49,9 @@ object WordleCommand : CompositeCommand(
 
   private val sessions = mutableMapOf<Long, GuessSession>()
 
-  @SubCommand
+  @SubCommand("s", "start")
   @Description("Start a wordle game")
-  suspend fun CommandSender.start(n: Int) {
+  suspend fun CommandSender.s(n: Int) {
     if (n < 4 || n > 10) {
       sendMessage("n should be in 4 ~ 10")
       return
@@ -74,7 +74,33 @@ object WordleCommand : CompositeCommand(
     }
   }
 
-  @SubCommand
+  @SubCommand("a", "abort")
+  @Description("Abort current session")
+  suspend fun CommandSender.a() {
+    val id = user?.id ?: 0
+    val prefix = if (getGroupOrNull() == null) {
+      PlainText("")
+    } else {
+      At(id)
+    }
+
+    val session = sessions[id]
+    if (session == null) {
+      sendMessage(prefix + "No active session.")
+    } else {
+      sendMessage(prefix + "Session aborted. Answer:${session.answer}\nStat:\n${session.stat()}")
+      sessions.remove(id)
+    }
+  }
+
+  @SubCommand("r", "remake")
+  @Description("Restart session")
+  suspend fun CommandSender.r(n: Int) {
+    a()
+    s(n)
+  }
+
+  @SubCommand("w", "word")
   @Description("Guess answer")
   suspend fun CommandSender.w(word: String) {
     val id = user?.id ?: 0
